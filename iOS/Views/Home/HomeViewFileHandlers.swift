@@ -15,18 +15,32 @@ class HomeViewFileHandlers {
     private let logger = Logger(subsystem: "com.example.FileNexus", category: "FileHandlers")
     
     func uploadFile(viewController: FileHandlingDelegate) {
-        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.data, .archive, .text])
+        // Create a document picker for all document types
+        let documentPicker = UIDocumentPickerViewController(
+            forOpeningContentTypes: [
+                .data,           // Generic data files
+                .archive,        // Archive files (zip, tar, etc.)
+                .text,           // Text files
+                .image,          // Image files
+                .audio,          // Audio files
+                .movie,          // Video files
+                .pdf,            // PDF files
+                .folder,         // Folders
+                .content         // Generic content
+            ],
+            asCopy: true
+        )
+        
+        // Set delegate to handle file selection
         documentPicker.delegate = viewController as? UIDocumentPickerDelegate
         documentPicker.modalPresentationStyle = .formSheet
-        viewController.present(documentPicker, animated: true, completion: nil) // Added completion: nil
+        documentPicker.allowsMultipleSelection = false
+        
+        // Present the document picker
+        viewController.present(documentPicker, animated: true, completion: nil)
     }
     
-    func importFile(viewController: FileHandlingDelegate) {
-        let documentPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.data, .archive, .text])
-        documentPicker.delegate = viewController as? UIDocumentPickerDelegate
-        documentPicker.modalPresentationStyle = .formSheet
-        viewController.present(documentPicker, animated: true, completion: nil) // Added completion: nil
-    }
+    // Remove the duplicate importFile method as it's redundant with uploadFile
     
     func createNewFolder(viewController: FileHandlingDelegate, folderName: String, completion: @escaping (Result<URL, Error>) -> Void) {
         let folderURL = viewController.documentsDirectory.appendingPathComponent(folderName)
